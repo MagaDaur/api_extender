@@ -1,4 +1,17 @@
 ffi.cdef[[
+	typedef struct{
+		void*   fnHandle;
+		char    szName[260];
+		__int32 nLoadFlags;
+		__int32 nServerCount;
+		__int32 type;
+		__int32 flags;
+		float  vecMins[3];
+		float  vecMaxs[3];
+		float   radius;
+		char    pad[0x1C];
+	}model_t;
+
     typedef model_t*(__thiscall* GetModel_t)(void*);
 ]]
 
