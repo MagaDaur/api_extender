@@ -68,3 +68,5 @@ Http.GetAsync = function (url, callback)
         callback(value.responseText)
     end)
 end
+
+return http
