@@ -1,4 +1,4 @@
-function array_walk_recursive(array, callback)
+array_walk_recursive = function(array, callback)
     for k, v in pairs(array) do
         if(type(v) == "table") then
             array_walk_recursive(v, callback)
