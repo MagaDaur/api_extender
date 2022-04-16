@@ -1,4 +1,4 @@
-local http = Panorama.LoadString([[
+http = Panorama.LoadString([[
     let requests = {};
 
     return {
@@ -30,7 +30,7 @@ local http = Panorama.LoadString([[
 http.requestTable = {}
 http.requestCount = 0
 
-local function asyncWebRequest(requestType, url, data, complete)
+function asyncWebRequest(requestType, url, data, complete)
     local options = {}
     
     options.data = data
@@ -68,5 +68,3 @@ Http.GetAsync = function (url, callback)
         callback(value.responseText)
     end)
 end
-
-return http

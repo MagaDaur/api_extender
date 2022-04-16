@@ -1,4 +1,4 @@
-local md5 = {
+md5 = {
     ff = tonumber("ffffffff", 16),
     consts = {}
 }
@@ -166,5 +166,3 @@ function md5.Calc(s)
     end
     return string.format("%08x%08x%08x%08x", swap(a), swap(b), swap(c), swap(d))
 end
-
-return md5
