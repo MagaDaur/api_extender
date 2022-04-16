@@ -59,12 +59,16 @@ end
 
 Http.PostAsync = function (url, data, callback)
     asyncWebRequest("POST", url, data, function (value)
-        callback(value.responseText)
+        if(callback) then
+            callback(value.responseText)
+        end
     end)
 end
 
 Http.GetAsync = function (url, callback)
     asyncWebRequest("GET", url, nil, function (value)
-        callback(value.responseText)
+        if(callback) then
+            callback(value.responseText)
+        end
     end)
 end
