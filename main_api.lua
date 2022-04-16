@@ -1,11 +1,29 @@
-array_walk_recursive = function(array, callback)
-    for k, v in pairs(array) do
-        if(type(v) == "table") then
-            array_walk_recursive(v, callback)
-        else
-            callback(k, v)
-        end
-    end
+ffi.cdef[[
+    typedef model_t*(__thiscall* GetModel_t)(void*);
+]]
+
+local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
+local EntityListVTable = ffi.cast("uintptr_t**", g_EntityList)[0]
+local GetClientEntity = ffi.cast("void*(__thiscall*)(void*, int)", EntityListVTable[3])
+
+C_BaseEntity.Ptr = function (self) -- remove after alpha update
+    return GetClientEntity(g_EntityList, self:EntIndex())
+end
+
+C_BaseEntity.GetRenderable = function (self)
+	return ffi.cast("void*", ffi.cast("uintptr_t", self:Ptr()) + 0x4)
+end
+
+C_BaseEntity.IsLocalPlayer = function (self)
+	return self:EntIndex() == EngineClient.GetLocalPlayer()
+end
+
+C_BaseEntity.GetModelName = function (self)
+	local renderable = ffi.cast("uintptr_t**", self:GetRenderable())
+	local renderable_vtable = renderable[0]
+	local GetModel = ffi.cast("GetModel_t", renderable_vtable[8])
+
+	return ffi.string(GetModel(renderable).szName)
 end
 
 function C_BasePlayer:GetWeapons()
@@ -120,5 +138,15 @@ end
 function RemoveHooks()
     for _, vmt in pairs(vmthooks) do
         DeleteVMT(vmt) -- restore all vmt hooks that we have created
+    end
+end
+
+array_walk_recursive = function(array, callback)
+    for k, v in pairs(array) do
+        if(type(v) == "table") then
+            array_walk_recursive(v, callback)
+        else
+            callback(k, v)
+        end
     end
 end
