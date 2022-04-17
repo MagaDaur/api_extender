@@ -56,19 +56,3 @@ http.updateRequests = function()
         end
     end
 end
-
-Http.PostAsync = function (url, data, callback)
-    asyncWebRequest("POST", url, data, function (value)
-        if(callback) then
-            callback(value.responseText)
-        end
-    end)
-end
-
-Http.GetAsync = function (url, callback)
-    asyncWebRequest("GET", url, nil, function (value)
-        if(callback) then
-            callback(value.responseText)
-        end
-    end)
-end
