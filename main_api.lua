@@ -233,7 +233,7 @@ array_walk_recursive = function(array, callback)
     end
 end
 
-local function write_file(path, data)
+function write_file(path, data)
     local pfile = ffi.cast("void*", ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x2, 0x80, nil))
 
     ffi.C.WriteFile(pfile, ffi.cast("char*", data), string.len(data), nil, nil)
@@ -241,7 +241,7 @@ local function write_file(path, data)
     ffi.C.CloseHandle(pfile)
 end
 
-local function read_file(path)
+function read_file(path)
     local pfile = ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x4, 0x80, nil)
 
     local size = ffi.C.GetFileSize(pfile, nil)
