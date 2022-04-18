@@ -12,12 +12,35 @@ ffi.cdef[[
 		char    pad[0x1C];
 	}model_t;
 
+    typedef struct
+	{
+			char padBase[4];
+			char* consoleName;
+			char pad0[12];
+			int iMaxClip1;
+			int iMaxClip2;
+			int iDefaultClip1;
+			int iDefaultClip2;
+			int iPrimaryMaxReserveAmmo;
+			int iSecondaryMaxReserveAmmo;
+			const char* szWorldModel;
+			const char* szViewModel;
+			const char* szDroppedModel;
+			char pad1[0x50];
+			const char* szHudName;
+			const char* szWeaponName;
+	}WeaponInfo_t;
+
     typedef model_t*(__thiscall* GetModel_t)(void*);
 ]]
 
 local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
 local EntityListVTable = ffi.cast("uintptr_t**", g_EntityList)[0]
 local GetClientEntity = ffi.cast("void*(__thiscall*)(void*, int)", EntityListVTable[3])
+
+local g_WeaponSystem = ffi.cast("void**", ffi.cast("uintptr_t", Utils.PatternScan("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0")) + 0x2)[0]
+local WeaponSystemVTable = ffi.cast("uintptr_t**", g_WeaponSystem)[0]
+local GetWeaponInfo = ffi.cast("WeaponInfo_t*(__thiscall*)(void*, int)", WeaponSystemVTable[2])
 
 C_BaseEntity.Ptr = function (self) -- remove after alpha update
     return GetClientEntity(g_EntityList, self:EntIndex())
