@@ -80,6 +80,13 @@ ffi.cdef[[
     } OVERLAPPED, *LPOVERLAPPED;
 
     int CreateDirectoryA(const char* lpPathName, void* lpSecurityAttributes);
+
+    void* GetClipboardData(unsigned int uFormat);
+    void* GlobalLock(void* hMem);
+    int GlobalUnlock(void* hMem);
+    int OpenClipboard(void* hWndNewOwner);
+    int CloseClipboard();
+    void* GetActiveWindow();
 ]]
 
 local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
@@ -252,4 +259,24 @@ function read_file(path)
     ffi.C.CloseHandle(pfile)
 
     return ffi.string(buff)
+end
+
+function GetClipBoardText()
+    local result
+
+    local window = ffi.C.GetActiveWindow()
+
+    ffi.C.OpenClipboard(window)
+
+    local data = ffi.C.GetClipboardData(1)
+
+    ffi.C.GlobalLock(data)
+
+    result = ffi.string(data)
+
+    ffi.C.GlobalUnlock(data)
+
+    ffi.C.CloseClipboard()
+
+    return result
 end
