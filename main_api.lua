@@ -32,6 +32,52 @@ ffi.cdef[[
 	}WeaponInfo_t;
 
     typedef model_t*(__thiscall* GetModel_t)(void*);
+
+    void* CreateFileA(
+        const char*                lpFileName,
+        unsigned long                 dwDesiredAccess,
+        unsigned long                 dwShareMode,
+        unsigned long lpSecurityAttributes,
+        unsigned long                 dwCreationDisposition,
+        unsigned long                 dwFlagsAndAttributes,
+        void*                hTemplateFile
+    );
+
+    bool ReadFile(
+        void*       hFile,
+        char*       lpBuffer,
+        unsigned long        nNumberOfBytesToRead,
+        unsigned long*      lpNumberOfBytesRead,
+        int lpOverlapped
+    );
+    bool WriteFile(
+        void*       hFile,
+        char*      lpBuffer,
+        unsigned long        nNumberOfBytesToWrite,
+        unsigned long*      lpNumberOfBytesWritten,
+        void* lpOverlapped
+    );
+    unsigned long GetFileSize(
+        void*  hFile,
+        unsigned long* lpFileSizeHigh
+    );
+
+    bool CloseHandle(
+        void * hHandle
+    );
+
+    typedef struct _OVERLAPPED {
+        unsigned long* Internal;
+        unsigned long* InternalHigh;
+        union {
+            struct {
+            unsigned long Offset;
+            unsigned long OffsetHigh;
+            } DUMMYSTRUCTNAME;
+            void* Pointer;
+        } DUMMYUNIONNAME;
+        void*    hEvent;
+    } OVERLAPPED, *LPOVERLAPPED;
 ]]
 
 local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
@@ -121,7 +167,7 @@ end
 function C_BasePlayer:IsInWater()
     return bit.band(self:GetProp("m_fFlags"), bit.lshift(1,10)) ~= 0
 end
--- getprop
+
 function C_BasePlayer:GetVelocity()
     return self:GetProp("m_vecVelocity")
 end
@@ -185,4 +231,23 @@ array_walk_recursive = function(array, callback)
             callback(k, v)
         end
     end
+end
+
+local function write_file(path, data)
+    local pfile = ffi.cast("void*", ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x2, 0x80, nil))
+
+    ffi.C.WriteFile(pfile, ffi.cast("char*", data), string.len(data), nil, nil)
+
+    ffi.C.CloseHandle(pfile)
+end
+
+local function read_file(path)
+    local pfile = ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x4, 0x80, nil)
+
+    local size = ffi.C.GetFileSize(pfile, nil)
+    local buff = ffi.new("char[" .. (size + 1) .. "]")
+    ffi.C.ReadFile(pfile, buff, size, nil, 0)
+    ffi.C.CloseHandle(pfile)
+
+    return ffi.string(buff)
 end
