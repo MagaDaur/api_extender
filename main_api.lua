@@ -40,7 +40,7 @@ local GetClientEntity = ffi.cast("void*(__thiscall*)(void*, int)", EntityListVTa
 
 local g_WeaponSystem = ffi.cast("void**", ffi.cast("uintptr_t", Utils.PatternScan("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0")) + 0x2)[0]
 local WeaponSystemVTable = ffi.cast("uintptr_t**", g_WeaponSystem)[0]
-local GetWeaponInfo = ffi.cast("WeaponInfo_t*(__thiscall*)(void*, int)", WeaponSystemVTable[2])
+GetWeaponInfo = ffi.cast("WeaponInfo_t*(__thiscall*)(void*, int)", WeaponSystemVTable[2])
 
 C_BaseEntity.Ptr = function (self) -- remove after alpha update
     return GetClientEntity(g_EntityList, self:EntIndex())
