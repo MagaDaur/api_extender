@@ -78,6 +78,8 @@ ffi.cdef[[
         } DUMMYUNIONNAME;
         void*    hEvent;
     } OVERLAPPED, *LPOVERLAPPED;
+
+    int CreateDirectoryA(const char* lpPathName, void* lpSecurityAttributes);
 ]]
 
 local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
