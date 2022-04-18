@@ -38,7 +38,7 @@ local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
 local EntityListVTable = ffi.cast("uintptr_t**", g_EntityList)[0]
 local GetClientEntity = ffi.cast("void*(__thiscall*)(void*, int)", EntityListVTable[3])
 
-local g_WeaponSystem = ffi.cast("void**", ffi.cast("uintptr_t", Utils.PatternScan("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0")) + 0x2)[0]
+g_WeaponSystem = ffi.cast("void**", ffi.cast("uintptr_t", Utils.PatternScan("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0")) + 0x2)[0]
 local WeaponSystemVTable = ffi.cast("uintptr_t**", g_WeaponSystem)[0]
 GetWeaponInfo = ffi.cast("WeaponInfo_t*(__thiscall*)(void*, int)", WeaponSystemVTable[2])
 
