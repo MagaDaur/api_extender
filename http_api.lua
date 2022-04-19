@@ -1,3 +1,8 @@
+--[[
+    Thanks to @Brotgeschmack
+    https://neverlose.cc/market/item?id=qz6F3V
+]]
+
 http = Panorama.LoadString([[
     let requests = {};
 
