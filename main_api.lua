@@ -87,7 +87,20 @@ ffi.cdef[[
     int OpenClipboard(void* hWndNewOwner);
     int CloseClipboard();
     void* GetActiveWindow();
+
+    int GetProcAddress(
+        void*, 
+        const char*
+    );
+
+    void* GetModuleHandleA(
+        const char*
+    );
+    
+    typedef void*(__cdecl* ShellExecute_t)(void*, const char*, const char*, const char*, const char*, int);
 ]]
+
+ShellExecute = ffi.cast("ShellExecute_t", ffi.C.GetProcAddress(ffi.C.GetModuleHandleA("shell32.dll"), "ShellExecuteA"))
 
 local g_EntityList = Utils.CreateInterface("client.dll", "VClientEntityList003")
 local EntityListVTable = ffi.cast("uintptr_t**", g_EntityList)[0]
@@ -243,7 +256,7 @@ array_walk_recursive = function(array, callback)
 end
 
 function write_file(path, data)
-    local pfile = ffi.cast("void*", ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x2, 0x80, nil))
+    local pfile = ffi.cast("void*", ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x4, 0xA0, nil))
 
     ffi.C.WriteFile(pfile, ffi.cast("char*", data), string.len(data), nil, nil)
 
@@ -251,7 +264,7 @@ function write_file(path, data)
 end
 
 function read_file(path)
-    local pfile = ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x4, 0x80, nil)
+    local pfile = ffi.C.CreateFileA(path, 0xC0000000, 0x00000004, 0, 0x4, 0xA0, nil)
 
     local size = ffi.C.GetFileSize(pfile, nil)
     local buff = ffi.new("char[" .. (size + 1) .. "]")
